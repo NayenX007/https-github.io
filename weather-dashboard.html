@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <script>
+        const apiKey = 'beabbf5e8ed56b2f07ef554c728fd7c3';
+        async function getWeatherData(city) {
+            const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch weather data');
+            }
+            return await response.json();
+        }
+
+        async function displayWeather() {
+            const city = 'London'; // You can change this to any city you want
+            try {
+                const weatherData = await getWeatherData(city);
+                document.getElementById('weather').innerHTML = `
+                    <h1>Weather in ${weatherData.location.name}</h1>
+                    <p>Temperature: ${weatherData.current.temp_c}°C</p>
+                    <p>Condition: ${weatherData.current.condition.text}</p>
+                `;
+            } catch (error) {
+                console.error(error);
+                document.getElementById('weather').innerText = 'Error fetching weather data';
+            }
+        }
+
+        window.onload = displayWeather;
+    </script>
+</head>
+<body>
+    <div id="weather"></div>
+</body>
+</html>
