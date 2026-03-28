@@ -1,237 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Calculator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        .calculator {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            width: 320px;
-        }
-
-        .calculator h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        .display {
-            background: #f0f0f0;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: right;
-            font-size: 28px;
-            color: #333;
-            min-height: 50px;
-            word-wrap: break-word;
-            word-break: break-all;
-        }
-
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-
-        button {
-            padding: 15px;
-            font-size: 18px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: bold;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .number {
-            background: #f0f0f0;
-            color: #333;
-        }
-
-        .number:hover {
-            background: #e0e0e0;
-        }
-
-        .operator {
-            background: #667eea;
-            color: white;
-        }
-
-        .operator:hover {
-            background: #5568d3;
-        }
-
-        .equals {
-            background: #48bb78;
-            color: white;
-            grid-column: span 2;
-        }
-
-        .equals:hover {
-            background: #38a169;
-        }
-
-        .clear {
-            background: #f56565;
-            color: white;
-            grid-column: span 2;
-        }
-
-        .clear:hover {
-            background: #e53e3e;
-        }
-
-        .delete {
-            background: #ed8936;
-            color: white;
-        }
-
-        .delete:hover {
-            background: #dd6b20;
-        }
-    </style>
-</head>
-<body>
-    <div class="calculator">
-        <h1>Calculator</h1>
-        <div class="display" id="display">0</div>
-        <div class="buttons">
-            <button class="clear" onclick="clearDisplay()">AC</button>
-            <button class="delete" onclick="deleteLast()">DEL</button>
-            <button class="operator" onclick="appendOperator('/')">/</button>
-            <button class="number" onclick="appendNumber('7')">7</button>
-            <button class="number" onclick="appendNumber('8')">8</button>
-            <button class="number" onclick="appendNumber('9')">9</button>
-            <button class="operator" onclick="appendOperator('*')">*</button>
-            <button class="number" onclick="appendNumber('4')">4</button>
-            <button class="number" onclick="appendNumber('5')">5</button>
-            <button class="number" onclick="appendNumber('6')">6</button>
-            <button class="operator" onclick="appendOperator('-')">-</button>
-            <button class="number" onclick="appendNumber('1')">1</button>
-            <button class="number" onclick="appendNumber('2')">2</button>
-            <button class="number" onclick="appendNumber('3')">3</button>
-            <button class="operator" onclick="appendOperator('+')">+</button>
-            <button class="number" onclick="appendNumber('0')" style="grid-column: span 2;">0</button>
-            <button class="number" onclick="appendNumber('.')">.</button>
-            <button class="equals" onclick="calculate()">=</button>
-        </div>
-    </div>
-
+    <title>Scientific Calculator</title>
     <script>
-        let display = document.getElementById('display');
-        let currentValue = '0';
-        let previousValue = '';
-        let operator = null;
-        let shouldResetDisplay = false;
-
-        function updateDisplay() {
-            display.textContent = currentValue;
-        }
-
-        function appendNumber(num) {
-            if (shouldResetDisplay) {
-                currentValue = num;
-                shouldResetDisplay = false;
-            } else {
-                if (currentValue === '0' && num !== '.') {
-                    currentValue = num;
-                } else if (num === '.' && currentValue.includes('.')) {
-                    return;
-                } else {
-                    currentValue += num;
-                }
-            }
-            updateDisplay();
-        }
-
-        function appendOperator(op) {
-            if (operator !== null && !shouldResetDisplay) {
-                calculate();
-            }
-            previousValue = currentValue;
-            operator = op;
-            shouldResetDisplay = true;
-        }
-
         function calculate() {
-            if (operator === null || shouldResetDisplay) {
-                return;
-            }
-
             let result;
-            const prev = parseFloat(previousValue);
-            const current = parseFloat(currentValue);
-
+            const operator = document.getElementById('operator').value;
+           
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            
             switch (operator) {
-                case '+':
-                    result = prev + current;
+                case 'add':
+                    result = num1 + num2;
                     break;
-                case '-':
-                    result = prev - current;
+                case 'subtract':
+                    result = num1 - num2;
                     break;
-                case '*':
-                    result = prev * current;
+                case 'multiply':
+                    result = num1 * num2;
                     break;
-                case '/':
-                    result = current !== 0 ? prev / current : 0;
+                case 'divide':
+                    result = num1 / num2;
                     break;
-                default:
-                    return;
+                case 'sin':
+                    result = Math.sin(num1);
+                    break;
+                case 'cos':
+                    result = Math.cos(num1);
+                    break;
+                case 'tan':
+                    result = Math.tan(num1);
+                    break;
+                case 'sqrt':
+                    result = Math.sqrt(num1);
+                    break;
+                case 'power':
+                    result = Math.pow(num1, num2);
+                    break;
             }
-
-            currentValue = result.toString();
-            operator = null;
-            shouldResetDisplay = true;
-            updateDisplay();
-        }
-
-        function clearDisplay() {
-            currentValue = '0';
-            previousValue = '';
-            operator = null;
-            shouldResetDisplay = false;
-            updateDisplay();
-        }
-
-        function deleteLast() {
-            if (currentValue.length > 1) {
-                currentValue = currentValue.slice(0, -1);
-            } else {
-                currentValue = '0';
-            }
-            updateDisplay();
+            document.getElementById('result').innerText = 'Result: ' + result;
         }
     </script>
+</head>
+<body>
+    <h1>Scientific Calculator</h1>
+    <input type="number" id="num1" placeholder="Enter first number" />
+    <input type="number" id="num2" placeholder="Enter second number (if needed)" />
+    <select id="operator">
+        <option value="add">Add</option>
+        <option value="subtract">Subtract</option>
+        <option value="multiply">Multiply</option>
+        <option value="divide">Divide</option>
+        <option value="sin">Sin</option>
+        <option value="cos">Cos</option>
+        <option value="tan">Tan</option>
+        <option value="sqrt">Square Root</option>
+        <option value="power">Power</option>
+    </select>
+    <button onclick="calculate()">Calculate</button>
+    <div id="result"></div>
 </body>
 </html>
