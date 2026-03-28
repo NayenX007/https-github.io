@@ -1,65 +1,292 @@
-
-    </select>
-    <button onclick="calculate()">Calculate</button>
-    <div id="result"></div>
-</body>
-</html>
-!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Scientific Calculator</title>
-    <script>
-        function calculate() {
-            let result;
-            const operator = document.getElementById('operator').value;
-           
-            const num1 = parseFloat(document.getElementById('num1').value);
-            const num2 = parseFloat(document.getElementById('num2').value);
-            
-            switch (operator) {
-                case 'add':
-                    result = num1 + num2;
-                    break;
-                case 'subtract':
-                    result = num1 - num2;
-                    break;
-                case 'multiply':
-                    result = num1 * num2;
-                    break;
-                case 'divide':
-                    result = num1 / num2;
-                    break;
-                case 'sin':
-                    result = Math.sin(num1);
-                    break;
-                case 'cos':
-                    result = Math.cos(num1);
-                    break;
-                case 'tan':
-                    result = Math.tan(num1);
-                    break;
-                case 'sqrt':
-                    result = Math.sqrt(num1);
-                    break;
-                case 'power':
-                    result = Math.pow(num1, num2);
-                    break;
-            }
-            document.getElementById('result').innerText = 'Result: ' + result;
-        }
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Calculator & Weather Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; max-width: 1000px; }
+        /* Calculator Style */
+        .calculator { background: #333; padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 320px; }
+        #display { width: 100%; height: 50px; font-size: 24px; text-align: right; margin-bottom: 10px; border: none; border-radius: 5px; padding: 5px; background: #eee; }
+        .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        button { padding: 15px; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        button:hover { opacity: 0.8; }
+        .sci { background: #555; color: white; }
+        .num { background: #eee; }
+        .op { background: #ff9500; color: white; }
+        .eq { background: #4caf50; color: white; grid-column: span 2; }
+        /* Weather Style */
+        .weather { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; width: 70%; }
+        #search-btn { padding: 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        #weather-info { margin-top: 20px; }
+    </style>
 </head>
 <body>
-    <h1>Scientific Calculator</h1>
-    <input type="number" id="num1" placeholder="Enter first number" />
-    <input type="number" id="num2" placeholder="Enter second number (if needed)" />
-    <select id="operator">
-        <option value="add">Add</option>
-        <option value="subtract">Subtract</option>
-        <option value="multiply">Multiply</option>
-        <option value="divide">Divide</option>
-        <option value="sin">Sin</option>
-        <option value="cos">Cos</option>
-        <option value="tan">Tan</option>
-        <option value="sqrt">Square Root</option>
-        <option value="power">Power</option>
+
+    <h2>Scientific Calculator & Weather Dashboard</h2>
+
+    <div class="container">
+        <!-- Scientific Calculator Section -->
+        <div class="calculator">
+            <input type="text" id="display" disabled>
+            <div class="buttons">
+                <button class="sci" onclick="clearDisplay()">C</button>
+                <button class="sci" onclick="deleteChar()">DEL</button>
+                <button class="sci" onclick="insert('Math.sqrt(')">√</button>
+                <button class="op" onclick="insert('/')">/</button>
+                
+                <button class="sci" onclick="insert('Math.sin(')">sin</button>
+                <button class="sci" onclick="insert('Math.cos(')">cos</button>
+                <button class="sci" onclick="insert('Math.tan(')">tan</button>
+                <button class="op" onclick="insert('*')">*</button>
+                
+                <button class="num" onclick="insert('7')">7</button>
+                <button class="num" onclick="insert('8')">8</button>
+                <button class="num" onclick="insert('9')">9</button>
+                <button class="op" onclick="insert('-')">-</button>
+                
+                <button class="num" onclick="insert('4')">4</button>
+                <button class="num" onclick="insert('5')">5</button>
+                <button class="num" onclick="insert('6')">6</button>
+                <button class="op" onclick="insert('+')">+</button>
+                
+                <button class="num" onclick="insert('1')">1</button>
+                <button class="num" onclick="insert('2')">2</button>
+                <button class="num" onclick="insert('3')">3</button>
+                <button class="sci" onclick="insert('Math.PI')">π</button>
+                
+                <button class="num" onclick="insert('0')">0</button>
+                <button class="num" onclick="insert('.')">.</button>
+                <button class="eq" onclick="calculate()">=</button>
+            </div>
+        </div>
+
+        <!-- Weather Dashboard Section -->
+        <div class="weather">
+            <h3>Weather Dashboard</h3>
+            <input type="text" id="cityInput" placeholder="Enter city name...">
+            <button id="search-btn" onclick="getWeather()">Search</button>
+            <div id="weather-info">
+                <p>Search a city to see weather data.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Calculator Functions
+        function insert(val) { document.getElementById('display').value += val; }
+        function clearDisplay() { document.getElementById('display').value = ""; }
+        function deleteChar() { let exp = document.getElementById('display').value; document.getElementById('display').value = exp.substring(0, exp.length - 1); }
+        function calculate() {
+            try { document.getElementById('display').value = eval(document.getElementById('display').value); }
+            catch(err) { document.getElementById('display').value = "Error"; }
+        }
+
+        // Weather Functions
+        const API_KEY = "beabbf5e8ed56b2f07ef554c728fd7c3"; // আপনার দেওয়া API Key এখানে বসানো হয়েছে
+
+        async function getWeather() {
+            const city = document.getElementById('cityInput').value;
+            const url = `https://api.openweathermap.org{city}&appid=${API_KEY}&units=metric`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.cod === 200) {
+                    document.getElementById('weather-info').innerHTML = `
+                        <h4>${data.name}, ${data.sys.country}</h4>
+                        <p>Temperature: <strong>${data.main.temp} °C</strong></p>
+                        <p>Condition: ${data.weather[0].description}</p>
+                        <p>Humidity: ${data.main.humidity}%</p>
+                    `;
+                } else {
+                    document.getElementById('weather-info').innerHTML = `<p style="color:red">City not found!</p>`;
+                }
+            } catch (error) {
+                document.getElementById('weather-info').innerHTML = `<p style="color:red">Error fetching data. Check your API key activation.</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
